@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Message Box</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: slateblue;
+            padding: 10px; /* Add padding for smaller screens */
+            box-sizing: border-box; /* Include padding in width calculations */
+        }
+
+        #wrapper {
+            text-align: center;
+            width: 100%; /* Full width */
+            max-width: 450px; /* Maximum width for smaller screens */
+        }
+
+        #messageBox {
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 100%; /* Full width */
+            height: 500px; /* Fixed height */
+            max-height: 500px; /* Max height to prevent expansion */
+            overflow-y: auto; /* Allow scrolling */
+            margin-bottom: 10px;
+            background-color: rgb(50, 50, 50);
+            color: white; /* For visibility of text */
+            text-align: left;
+            border-width: 7px;
+            border-color: rgb(0, 0, 0);
+            box-sizing: border-box; /* Include padding in width calculations */
+            word-wrap: break-word; /* Allows breaking long words */
+            overflow-wrap: break-word; /* For better compatibility */
+            white-space: pre-wrap; /* Preserve whitespace and wrap text */
+        }
+
+        #messageInput {
+            width: calc(90% - 20px); /* Full width minus padding */
+            padding: 10px;
+            color: rgb(255, 255, 255);
+            background-color: rgb(0, 0, 0);
+            height: 70px;
+            font-size: 20px;
+            border-width: thick;
+            border-color: rgb(59, 58, 58);
+            box-sizing: border-box; /* Include padding in width calculations */
+            resize: none; /* Disable resizing */
+        }
+
+        #sendButton {
+            padding: 10px 15px;
+            width: 50%; /* Full width */
+            height: 40px;
+            background-color: rgb(17, 198, 17);
+            border-width: 4px;
+            box-sizing: border-box; /* Include padding in width calculations */
+            margin-top: 5px; /* Add a little margin for spacing */
+            cursor: pointer; /* Change cursor to pointer */
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="wrapper">
+    <textarea name="inp" id="messageInput" placeholder="Enter your message"></textarea>
+    <br>
+    <br>
+    <button id="sendButton">Send</button>
+    <br><br><br>
+    <div id="messageBox"></div>
+</div>
+
+<script>
+    const chatKey = ''; // Set this value based on the user's input or login
+    const displayedMessageIds = new Set(); // To track displayed message IDs
+
+    // Function to append messages to the message box
+    function appendMessage(message, messageId) {
+        const messageBox = document.getElementById('messageBox');
+        messageBox.innerHTML += `<div style="margin-bottom: 10px;">${message}</div>`; // Add margin for spacing
+        messageBox.scrollTop = messageBox.scrollHeight; // Auto-scroll to the bottom
+        displayedMessageIds.add(messageId); // Mark this message ID as displayed
+    }
+
+    // Function to fetch messages from the backend
+    function fetchMessages() {
+        fetch(`/messages?key=${chatKey}`)
+            .then(response => response.json())
+            .then(data => {
+                data.messages.forEach((messageData) => {
+                    const messageId = messageData.id; // Get the message ID
+                    const messageContent = messageData.message; // Get the message content
+                    // Only append the message if it hasn't been displayed
+                    if (!displayedMessageIds.has(messageId)) {
+                        appendMessage(messageContent, messageId);
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching messages:', error));
+    }
+
+    // Polling function to fetch messages every 2 seconds
+    setInterval(fetchMessages, 2000);
+
+    // Function to send message to the backend
+    document.getElementById('sendButton').addEventListener('click', function() {
+        const message = document.getElementById('messageInput').value;
+        if (message) {
+            fetch('/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `message=${encodeURIComponent(message)}`
+            });
+            // Clear the input field
+            document.getElementById('messageInput').value = '';
+        }
+    });
+</script>
+
+</body>
+</html>

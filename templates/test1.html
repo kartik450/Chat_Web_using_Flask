@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat-Box</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url("{{ url_for('static', filename='backg.jpg') }}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #wrapper {
+            text-align: center;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        #messageBox {
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 100%;
+            height: 500px;
+            max-height: 500px;
+            overflow-y: auto;
+            background-color: transparent;
+            color: white;
+            text-align: left;
+            border-width: 7px;
+            border-color: rgb(0, 0, 0);
+            box-sizing: border-box;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: pre-wrap;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* For the logged-in user's messages (right side) */
+        .message-right {
+            align-self: flex-end;
+            background-color: rgb(0, 153, 0); /* Light green */
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 10px;
+            max-width: 60%;
+            word-wrap: break-word;
+        }
+
+        /* For other users' messages (left side) */
+        .message-left {
+            align-self: flex-start;
+            background-color: rgb(2, 2, 171); /* Light blue */
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 10px;
+            max-width: 60%;
+            word-wrap: break-word;
+        }
+
+        /* Styling for the username in red */
+        .username {
+            color: rgb(26, 0, 42);
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        #inputWrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: black;
+            padding: 10px;
+        }
+
+        #messageInput {
+            width: 85%;
+            padding: 10px;
+            color: white;
+            background-color: black;
+            font-size: 20px;
+            border: 2px solid black;
+            resize: none;
+            height: 50px;
+        }
+
+        #sendButton {
+            width: 40px;
+            height: 40px;
+            background-image: url("{{ url_for('static', filename='send_icon.webp') }}");
+            background-color: transparent;
+            background-repeat: no-repeat;
+            background-size: cover;
+            border-color: transparent;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="wrapper">
+    <div id="messageBox"></div>
+
+    <div id="inputWrapper">
+        <textarea id="messageInput" placeholder="Enter your message"></textarea>
+        <button id="sendButton"></button>
+    </div>
+</div>
+
+<script>
+    const loggedInUsername = "{{ session['username'] }}";  // The current user's username
+    const chatKey = '';  // Set this value based on the user's input or login
+    const displayedMessageIds = new Set();  // To track displayed message IDs
+
+    // Function to append messages to the message box
+    function appendMessage(message, messageId, sender) {
+        const messageBox = document.getElementById('messageBox');
+
+        // Determine if the message is from the logged-in user
+        const isCurrentUser = (sender === loggedInUsername);
+        const messageClass = isCurrentUser ? 'message-right' : 'message-left';
+
+        // Create a div to hold the message
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add(messageClass);
+
+        // Show "You" if the sender is the current user, otherwise show the sender's username
+        const senderDisplay = isCurrentUser ? 'You' : sender;
+
+        // Create a span for the username (in red) and message content
+        const usernameSpan = `<span class="username">${senderDisplay}:</span>`;
+        const messageContent = `<span>${message}</span>`;
+
+        // Add the username and message to the message div
+        messageDiv.innerHTML = `${usernameSpan} ${messageContent}`;
+
+        // Append the message div to the message box
+        messageBox.appendChild(messageDiv);
+        messageBox.scrollTop = messageBox.scrollHeight;  // Auto-scroll to the bottom
+        displayedMessageIds.add(messageId);  // Mark this message ID as displayed
+    }
+
+    // Function to fetch messages from the backend
+    function fetchMessages() {
+        fetch(`/messages?key=${chatKey}`)
+            .then(response => response.json())
+            .then(data => {
+                data.messages.forEach((messageData) => {
+                    const messageId = messageData.id;  // Get the message ID
+                    const messageContent = messageData.message.split(' : ')[1];  // Extract the message text
+                    const sender = messageData.message.split(' : ')[0];  // Extract the sender username
+                    // Only append the message if it hasn't been displayed
+                    if (!displayedMessageIds.has(messageId)) {
+                        appendMessage(messageContent, messageId, sender);
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching messages:', error));
+    }
+
+    // Polling function to fetch messages every 2 seconds
+    setInterval(fetchMessages, 100);
+
+    // Function to send message to the backend
+    document.getElementById('sendButton').addEventListener('click', async function() {
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value.trim(); // Trim any extra whitespace
+        const sendButton = document.getElementById('sendButton'); // The button element
+
+        if (message) {
+            // Disable send button immediately to prevent multiple submissions
+            sendButton.disabled = true;
+
+            try {
+                // Optimistically clear the input for a fast user response
+                messageInput.value = '';  
+                messageInput.focus(); // Refocus the input field to keep the keyboard open
+
+                // Send the message to the server
+                await fetch('/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `message=${encodeURIComponent(message)}`
+                });
+
+            } catch (error) {
+                console.error('Error sending message:', error);
+            } finally {
+                // Re-enable the send button after message is sent
+                sendButton.disabled = false;
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
