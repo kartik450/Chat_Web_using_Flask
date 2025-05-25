@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body{
+            background-color: black;
+        }
+    </style>
+    <title>Sender</title>
+
+</head>
+<body>
+    <div style="text-align: center;margin-top:12%;">
+    <form action="{{ url_for('med') }}" method="post">
+        <textarea name="msg" placeholder="Enter message" style="background-color: black;width: 500px;height: 250px;font-size: 20px;color:white" maxlength="1000"></textarea>
+        <br>
+        <button type="submit" style="width: 200px;height: 40px;font-size: 20px;background-color: rgb(181, 185, 181);border-radius: 50px;border-color: rgb(206, 45, 45);border-width: 4px;">Send</button>
+    </form>
+    </div>
+</body>
+</html>
