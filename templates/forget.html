@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body{
+            background-color: rebeccapurple;
+        }
+    </style>
+    <title>Forget?</title>
+</head>
+<body>
+    <div style="text-align: center;padding-top:6%;">
+        <p>{{ error_m }}</p>
+        <br><br>
+        <h1><u>Change Password</u></h1>
+        <br>
+        <form action="/send_forget_otp" method="post">
+            <input type="text" name="forget_u" placeholder="Enter username" style="width: 280px;height: 40px;background-color: black;color: white;font-size: 25px;border-color: black;border-width: 5px;" required>
+            <br><br><br>
+            <button type="submit" style="width: 170px;height: 40px;background-color: rgb(2, 179, 70);color: white;font-size: 20px;border-width: 4px;">Send OTP</button>
+        </form>
+    </div>
+</body>
+</html>
