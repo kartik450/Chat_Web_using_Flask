@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body{
+            background-color:rgb(0, 0, 0);
+        }
+    </style>
+    <title>Login</title>
+</head>
+<body>
+    <div style="text-align: center;padding-top: 10%;">
+        <form action="user_details" method="post">
+            <p style="color: white;">{{ message2 }}</p>
+            <br>
+            <br>
+            <label for="username" style="font-size: 25px;font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; color: white;">Enter Username:</label>
+            <br>
+            <input type="text" name="username" id="name" placeholder="Enter your username" style="width: 280px;height: 40px;background-color: rgb(255, 255, 255);color: rgb(0, 0, 0);font-size: 25px;border-color: rgb(32, 85, 141);border-width: 5px;" required>
+            <br>
+            <br>
+            <label for="password" style="font-size: 25px;font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;color: white;">Enter Password:</label>
+            <br>
+            
+                <input type="password" id="password" name="password" placeholder="Enter your password" 
+                       style="width: 280px;height: 40px;background-color: rgb(255, 255, 255);color: rgb(0, 0, 0);font-size: 25px;border-color: rgb(32, 85, 141);border-width: 5px;" required>
+                
+                
+                
+        <!-- </div> -->
+         <br>
+         <div style="font-size: 20px;color: white;">
+                <input type="checkbox" id="showPassword"  onclick="togglePassword()" style="scale:1.5;"> Show Password
+        
+        
+            <script>
+                function togglePassword() {
+                    var passwordField = document.getElementById("password");
+                    if (passwordField.type === "password") {
+                        passwordField.type = "text";
+                    } else {
+                        passwordField.type = "password";
+                    }
+                }
+            </script>
+            </div>
+            <!-- <div style="text-align: center;padding-top: 10%;"></div> -->
+            <br>       <a href="/forget" style="color: rgb(118, 0, 0); text-align:right;">Forget Password?</a>
+            <br>
+            <br>
+            <br>
+            <button type="submit" style="width: 170px;height: 40px;background-color: rgb(255, 255, 255);color: rgb(0, 0, 0);font-size: 20px;border-width: 4px;">Submit</button>
+            
+            <br><br><br>
+            <a href="/register"><button type="button" style="width: 300px; height: 40px;background-color:rgb(39, 173, 57);font-size: 20px;border-width: 4px;">Register</button></a>
+        </form>
+    </div>
+</body>
+</html>
