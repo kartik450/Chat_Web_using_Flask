@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: rebeccapurple;
+        }
+        input {
+            width: 280px;
+            height: 40px;
+            background-color: black;
+            color: white;
+            font-size: 25px;
+            border-color: black;
+            border-width: 5px;
+        }
+    </style>
+    <title>Verify OTP</title>
+</head>
+<body>
+    <div style="text-align: center;padding-top:6%;">
+        <p>{{ error_m }}</p>
+        <br><br>
+        <h1><u>Verify OTP</u></h1>
+        <br>
+        <form action="/new_pass" method="post">
+            <input type="text" name="forget_u" placeholder="Enter username" value="{{ username }}" readonly style="width: 280px;height: 40px;background-color: black;color: white;font-size: 25px;border-color: black;border-width: 5px;">
+            <br><br><br>
+            <input type="text" name="otp" placeholder="Enter OTP" required>
+            <br><br><br>
+            <input type="text" name="new_password" placeholder="Enter new password" required>
+            <br><br>
+            <input type="text" name="new_password_con" placeholder="Confirm new password" required>
+            <br><br><br>
+            <button type="submit" style="width: 170px;height: 40px;background-color: rgb(2, 179, 70);color: white;font-size: 20px;border-width: 4px;">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
