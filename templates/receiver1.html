@@ -1,0 +1,38 @@
+<!-- <form method="POST" action="/receiver"> -->
+    <!-- <input type="text" name="key1" placeholder="Enter key" required> -->
+    <!-- <input type="submit" value="Receive Messages"> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body{
+            background-color: black;
+        }
+    </style>
+    <title>Received Messages</title>
+</head>
+
+
+<div>
+    <body style="color: white;font-size: 20px;">
+        <ul>
+            {% for message in messag %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        <!-- <p style="color: white;">gsdgds</p> -->
+</div>
+
+<body></body>
+    
+</body>
+</html>
+
+<!-- Add JavaScript to refresh the page every 1 second -->
+<script>
+    setInterval(function() {
+        window.location.reload();
+    }, 1000);  // Refresh every 1000 milliseconds (1 second)
+</script>
